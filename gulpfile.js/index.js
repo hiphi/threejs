@@ -72,8 +72,8 @@ function sassTask() {
  */
 function tsLibraries(){
     return src([
-        '../node_modules/jquery/dist/jquery.js',
-        '../node_modules/jquery.easing/jquery.easing.min.js'/*,
+        __dirname + '/../node_modules/jquery/dist/jquery.js',
+        __dirname + '/../node_modules/jquery.easing/jquery.easing.min.js'/*,
         '../node_modules/three-orbitcontrols/OrbitControls.js'*/])
         .pipe(concat('lib/vender.js'))
         .pipe(uglify())
