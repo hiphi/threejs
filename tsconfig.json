@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "skipLibCheck": true,     // ビルド高速化（型定義内の型チェック無効化）
+    "target": "es5",
+    "module": "es2015" //これがないとimport文とexport文がコンパイラによってCommonJSとして変換される
+  }
+}
