@@ -95,7 +95,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-!(function webpackMissingModule() { var e = new Error("Cannot find module 'view/Spline'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+/* harmony import */ var _view_SplineView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./view/SplineView */ "../src/ts/view/SplineView.ts");
 
 
 var Main = /** @class */ (function () {
@@ -103,7 +103,7 @@ var Main = /** @class */ (function () {
     }
     Main.onDomContentsLoaded = function (event) {
         if (event === void 0) { event = null; }
-        Main.Spline = new !(function webpackMissingModule() { var e = new Error("Cannot find module 'view/Spline'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()).Spline();
+        Main.Spline = new _view_SplineView__WEBPACK_IMPORTED_MODULE_0__["default"].Spline();
     };
     return Main;
 }());
@@ -113,6 +113,37 @@ if (document.readyState !== 'loading') {
 else {
     document.addEventListener('DOMContentLoaded', Main.onDomContentsLoaded);
 }
+
+
+/***/ }),
+
+/***/ "../src/ts/view/SplineView.ts":
+/*!************************************!*\
+  !*** ../src/ts/view/SplineView.ts ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+var SplineView;
+(function (SplineView) {
+    var Spline = /** @class */ (function () {
+        function Spline() {
+            console.log('Spline construct');
+            this.init();
+        }
+        Spline.prototype.init = function () {
+            var tag = jQuery('<div id="mapViewer"></div>');
+            //const tgt = $('body').append(tag);
+            tag.stop(false, true).animate({ left: '100px' }, 500, 'easeOutSine');
+        };
+        return Spline;
+    }());
+    SplineView.Spline = Spline;
+})(SplineView || (SplineView = {}));
+/* harmony default export */ __webpack_exports__["default"] = (SplineView);
 
 
 /***/ })

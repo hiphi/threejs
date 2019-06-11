@@ -1,13 +1,13 @@
 'use strict';
 
-import view from 'view/Spline';
+import SplineView from './view/SplineView';
 
 class Main {
 
     public static Spline;
 
     public static onDomContentsLoaded(event:any = null) {
-        Main.Spline = new view.Spline();
+        Main.Spline = new SplineView.Spline();
     }
 }
 
