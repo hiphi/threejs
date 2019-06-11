@@ -93201,6 +93201,11 @@ var SplineView;
 (function (SplineView) {
     var Spline = /** @class */ (function () {
         function Spline() {
+            //
+            this.axis = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
+            this.up = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 1, 0);
+            this.counter = 0;
+            this.tangent = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]();
             console.log('Spline construct');
             this.init();
         }
@@ -93213,6 +93218,7 @@ var SplineView;
             this.setupThree();
         };
         Spline.prototype.setupThree = function () {
+            var _this = this;
             this.scene = new three__WEBPACK_IMPORTED_MODULE_0__["Scene"]();
             this.scene.background = new three__WEBPACK_IMPORTED_MODULE_0__["Color"]().setHSL(0.6, 0, 1);
             this.scene.fog = new three__WEBPACK_IMPORTED_MODULE_0__["Fog"](this.scene.background.getHex(), 1, 5000);
@@ -93257,6 +93263,33 @@ var SplineView;
             this.planeMesh.receiveShadow = true;
             this.planeMesh.castShadow = true;
             this.scene.add(this.planeMesh);
+            //
+            var numPoints = 50;
+            this.spline = new three__WEBPACK_IMPORTED_MODULE_0__["CatmullRomCurve3"]([
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, 0),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](0, 0, 200),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](150, 0, 150),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](150, 0, 50),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](250, 0, 100),
+                new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](250, 0, 300)
+            ]);
+            var material = new three__WEBPACK_IMPORTED_MODULE_0__["LineBasicMaterial"]({
+                color: 0xff00f0,
+            });
+            var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["Geometry"]();
+            var splinePoints = this.spline.getPoints(numPoints);
+            for (var i = 0; i < splinePoints.length; i++) {
+                geometry.vertices.push(splinePoints[i]);
+            }
+            var line = new three__WEBPACK_IMPORTED_MODULE_0__["Line"](geometry, material);
+            this.scene.add(line);
+            //
+            geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BoxGeometry"](5, 40, 4);
+            var mat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
+                color: 0xff0000
+            });
+            this.box = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, mat);
+            this.scene.add(this.box);
             this.render = new three__WEBPACK_IMPORTED_MODULE_0__["WebGLRenderer"]();
             this.render.autoClear = false;
             this.render.setPixelRatio(window.devicePixelRatio);
@@ -93269,6 +93302,20 @@ var SplineView;
             this.controls.maxDistance = 2500;
             jQuery('#mapViewer').append(this.render.domElement);
             this.animate();
+            setInterval(function () { _this.moveBox(); }, 100);
+        };
+        Spline.prototype.moveBox = function () {
+            if (this.counter <= 1) {
+                this.box.position.copy(this.spline.getPointAt(this.counter));
+                this.tangent = this.spline.getTangentAt(this.counter).normalize();
+                this.axis.crossVectors(this.up, this.tangent).normalize();
+                var radians = Math.acos(this.up.dot(this.tangent));
+                this.box.quaternion.setFromAxisAngle(this.axis, radians);
+                this.counter += 0.005;
+            }
+            else {
+                this.counter = 0;
+            }
         };
         Spline.prototype.animate = function () {
             var _this = this;

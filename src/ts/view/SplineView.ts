@@ -1,7 +1,15 @@
 'use strict';
 
 import * as THREE from 'three';
-import {Mesh, MeshStandardMaterial, PerspectiveCamera, Scene, WebGLRenderer} from "three";
+import {
+    CatmullRomCurve3,
+    Mesh,
+    MeshBasicMaterial,
+    MeshStandardMaterial,
+    PerspectiveCamera,
+    Scene,
+    WebGLRenderer
+} from "three";
 import {OrbitControls} from 'three-orbitcontrols-ts';
 
 namespace SplineView {
@@ -15,6 +23,13 @@ namespace SplineView {
         //
         protected planeMaterial:MeshStandardMaterial;
         protected planeMesh:Mesh;
+        protected spline:CatmullRomCurve3;
+        protected box:Mesh;
+        //
+        protected axis = new THREE.Vector3();
+        protected up = new THREE.Vector3(0, 1, 0);
+        protected counter:number = 0;
+        protected tangent = new THREE.Vector3();
 
         constructor() {
             console.log('Spline construct');
@@ -80,6 +95,38 @@ namespace SplineView {
             this.planeMesh.castShadow = true;
             this.scene.add( this.planeMesh );
 
+            //
+            let numPoints = 50;
+            this.spline = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0, 0, 200),
+                new THREE.Vector3(150, 0,150),
+                new THREE.Vector3(150, 0, 50),
+                new THREE.Vector3(250, 0, 100),
+                new THREE.Vector3(250, 0, 300)]);
+
+            let material = new THREE.LineBasicMaterial({
+                color: 0xff00f0,
+            });
+
+            let geometry = new THREE.Geometry();
+            let splinePoints = this.spline.getPoints(numPoints);
+
+            for (let i = 0; i < splinePoints.length; i++) {
+                geometry.vertices.push(splinePoints[i]);
+            }
+
+            let line = new THREE.Line(geometry, material);
+            this.scene.add(line);
+            //
+            geometry = new THREE.BoxGeometry(5, 40, 4);
+            let mat:MeshBasicMaterial = new THREE.MeshBasicMaterial({
+                color: 0xff0000
+            });
+
+            this.box = new THREE.Mesh(geometry, mat);
+            this.scene.add(this.box);
+
             this.render = new THREE.WebGLRenderer();
             this.render.autoClear = false;
             this.render.setPixelRatio( window.devicePixelRatio );
@@ -94,6 +141,26 @@ namespace SplineView {
 
             jQuery('#mapViewer').append(this.render.domElement)
             this.animate();
+
+            setInterval(()=>{this.moveBox()},100);
+        }
+
+        protected moveBox() {
+            if (this.counter <= 1) {
+                this.box.position.copy( this.spline.getPointAt(this.counter) );
+
+                this.tangent = this.spline.getTangentAt(this.counter).normalize();
+
+                this.axis.crossVectors(this.up, this.tangent).normalize();
+
+                let radians = Math.acos(this.up.dot(this.tangent));
+
+                this.box.quaternion.setFromAxisAngle(this.axis, radians);
+
+                this.counter += 0.005
+            } else {
+                this.counter = 0;
+            }
         }
 
         protected animate() {
