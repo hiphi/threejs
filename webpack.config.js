@@ -6,7 +6,7 @@ module.exports = {
     mode: 'development',
     devtool: 'source-map',
     entry: {
-        'index.js' :'../src/ts/main.ts'
+        'index.js' :`${__dirname}/src/ts/main.ts`
     },
     output: {
         path: `${__dirname}/dist`,
