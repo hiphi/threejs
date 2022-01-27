@@ -27,7 +27,7 @@
     "merge2": "^1.2.3",
     "run-sequence": "^2.2.1",
     "st": "^1.2.2",
-    "three": "^0.105.2",
+    "three": "^0.137.0",
     "three-orbitcontrols-ts": "^0.1.2",
     "ts-loader": "^6.0.2",
     "typescript": "^3.5.1",
